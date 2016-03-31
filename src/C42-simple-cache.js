@@ -4,6 +4,29 @@ window.C42 = window.C42 || {};
 
 C42.SimpleCache = function(){
     "use strict";
+
+    // the compressed version have this var to False.
+    var debug = true;
+    var logger = function(){
+        return {
+            log: function(){
+                if(debug){
+                    console.log.apply(console,arguments);
+                }
+            },
+            warn: function(){
+                if(debug){
+                    console.warn.apply(console,arguments);
+                }
+            },
+            error : function(){
+                if(debug){
+                    console.error.apply(console,arguments);
+                }
+            }
+        };
+    }();
+
     /**
      * Validates the basic cacheSetup. The ones should ALWAYS be there
      * @private
@@ -14,28 +37,28 @@ C42.SimpleCache = function(){
         var me = "SimpleCache::validateOptions";
         // Required fields
         if (cacheSetup.cache === undefined){
-            console.warn(me + " : No cache. Required field");
+            logger.warn(me + " : No cache. Required field");
             return false;
         }
         if (!cacheSetup.cachedObjectName){
-            console.warn(me + " : No cachedObjectName. Required field");
+            logger.warn(me + " : No cachedObjectName. Required field");
             return false;
         }
         if (!cacheSetup.cacheInvalidators){
-            console.warn(me + " : No cacheInvalidators. Required field");
+            logger.warn(me + " : No cacheInvalidators. Required field");
             return false;
         }
         // Fields type
         if (typeof cacheSetup.cachedObjectName !== "string") {
-            console.warn(me + " : No valid cachedObjectName");
+            logger.warn(me + " : No valid cachedObjectName");
             return false;
         }
         if (!Array.isArray(cacheSetup.cacheInvalidators)) {
-            console.warn(me + " : No valid cacheInvalidators. Should be an Array");
+            logger.warn(me + " : No valid cacheInvalidators. Should be an Array");
             return false;
         }
         if (cacheSetup.cacheInvalidators.length === 0) {
-            console.warn(me + " : Empty cacheInvalidators. Not allowed to add a cached object without invalidators. To store data, use the store.");
+            logger.warn(me + " : Empty cacheInvalidators. Not allowed to add a cached object without invalidators. To store data, use the store.");
             return false;
         }
         return true;
@@ -132,7 +155,7 @@ C42.SimpleCache = function(){
         add: function(cacheSetup){
             var me = "SimpleCache::set";
             if(!cacheSetup || !validateOptions(cacheSetup)){
-                console.error(me + " : No valid cacheSetup provided updating a chached object");
+                logger.error(me + " : No valid cacheSetup provided updating a chached object");
                 return false;
             }
 
@@ -141,7 +164,7 @@ C42.SimpleCache = function(){
 
 
             if(cachedKeys.includes(cacheSetup.cachedObjectName)){
-                console.warn(me + " : Trying to add to the cache: '"+cacheSetup.cachedObjectName+"'. It is already cached.");
+                logger.warn(me + " : Trying to add to the cache: '"+cacheSetup.cachedObjectName+"'. It is already cached.");
                 return false;
             }
 
@@ -165,12 +188,12 @@ C42.SimpleCache = function(){
             var me = "C42.SimpleCache::update";
 
             if(!cacheSetup || !validateOptions(cacheSetup)){
-                console.error(me + " : No valid cacheSetup provided updating a chached object");
+                logger.error(me + " : No valid cacheSetup provided updating a chached object");
                 return false;
             }
 
             if(!cachedKeys.includes(cacheSetup.cachedObjectName)){
-                console.error(me + " : Trying to update '"+cacheSetup.cachedObjectName+"'. It is not cached.");
+                logger.error(me + " : Trying to update '"+cacheSetup.cachedObjectName+"'. It is not cached.");
                 return false;
             }
 
@@ -228,7 +251,7 @@ C42.SimpleCache = function(){
             var me = "SimpleCache::remove";
 
             if(!cachedKeys.includes(cachedObjectName)){
-                console.error(me + " : Trying to remove '"+cachedObjectName+"'. It is not cached.");
+                logger.error(me + " : Trying to remove '"+cachedObjectName+"'. It is not cached.");
                 return false;
             }
             var cachePosition = cachedKeys.indexOf(cachedObjectName);
@@ -251,7 +274,7 @@ C42.SimpleCache = function(){
 
             if(typeof invalidator === "string"){
                 if(invalidatorsMapping[invalidator] === undefined){
-                    console.warn(me + " : Trying to invalidate with the '"+invalidator+"'. Not found");
+                    logger.warn(me + " : Trying to invalidate with the '"+invalidator+"'. Not found");
                     return false;
                 }
             }
@@ -262,7 +285,7 @@ C42.SimpleCache = function(){
                 invalidated = invalidatedList[y];
 
                 if(!cachedKeys.includes(invalidated)){
-                    console.error(me + " : Trying to invalidator '"+invalidated+"'. It is not cached.");
+                    logger.error(me + " : Trying to invalidator '"+invalidated+"'. It is not cached.");
                     return false;
                 }
 
@@ -292,7 +315,7 @@ C42.SimpleCache = function(){
                 if(cache[cachePosition].cachedObjectName === cachedObjectName){
                     return cache[cachePosition].cache;
                 }else{
-                    console.error(me + " : Indexs are broken. Restart component is required;");
+                    logger.error(me + " : Indexs are broken. Restart component is required;");
                 }
             }
         },
