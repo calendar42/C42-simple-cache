@@ -5,7 +5,7 @@ window.C42 = window.C42 || {};
 C42.SimpleCache = function(){
     "use strict";
 
-    // the compressed version have this var to False.
+    // Note: the compressed version have debug = false.
     var debug = true;
     var logger = function(){
         return {
@@ -73,8 +73,10 @@ C42.SimpleCache = function(){
     var addInvalidators = function(cachedObjectName,invalidatorsList){
         var me = "SimpleCache::addInvalidators";
         var invalidator;
+        // For performance, we need to keep the list of objects and it's invalidators up to date
         for (var i = invalidatorsList.length - 1; i >= 0; i--) {
             invalidator = invalidatorsList[i];
+
             if(invalidatorsMapping[invalidator] !== undefined){
                 if(!invalidatorsMapping[invalidator].includes(cachedObjectName)){
                     invalidatorsMapping[invalidator].push(cachedObjectName);
@@ -95,7 +97,7 @@ C42.SimpleCache = function(){
         var me = "SimpleCache::removeObjectInvalidators";
         var invalidator;
         var objectPosition;
-        // If we have a lits of onvalidators we only remove thoose
+        // We only remove the objects that If we have a lits of onvalidators we only remove thoose
         if(invalidatorsList && invalidatorsList.length && invalidatorsList.length !== 0){
             for (var i = invalidatorsList.length - 1; i >= 0; i--) {
                 invalidator = invalidatorsList[i];
@@ -159,26 +161,29 @@ C42.SimpleCache = function(){
                 return false;
             }
 
-            cacheSetup.lastUpdate = new Date();
-            cacheSetup.valid = true;
-
-
             if(cachedKeys.includes(cacheSetup.cachedObjectName)){
                 logger.warn(me + " : Trying to add to the cache: '"+cacheSetup.cachedObjectName+"'. It is already cached.");
                 return false;
             }
 
+            cacheSetup.lastUpdate = new Date();
+            cacheSetup.valid = true;
+
+            // For performance we keep all invalidators registered and related to the objects we are caching
             addInvalidators(cacheSetup.cachedObjectName,cacheSetup.cacheInvalidators);
 
             cache.push(cacheSetup);
+
+            // For performance we keep all cached objects keys listed in a mapping
             cachedKeys.push(cacheSetup.cachedObjectName);
             return true;
         },
+
         /**
-         * Updates the cached object
+         * Updates the cached object, as it's invalidators
          * @param {object} cacheSetup The setup cache object. Expected format:
             {
-                  "cachedObjectName"  {string} The key name to identify the cached object
+                  "cachedObjectName"  {string} The key nam0e to identify the cached object
                   "cacheInvalidators" {array} The list of invalidators keys will invalidate the provided cached object
                   "cache": {object/string/...} Anything, the elemtn to be cached
             }
@@ -192,7 +197,10 @@ C42.SimpleCache = function(){
                 return false;
             }
 
-            if(!cachedKeys.includes(cacheSetup.cachedObjectName)){
+            var cachePosition = cachedKeys.indexOf(cacheSetup.cachedObjectName);
+
+            // For perfomance we use the indexOf to know if the object is actually cached and to get it's position
+            if(cachePosition === -1){
                 logger.error(me + " : Trying to update '"+cacheSetup.cachedObjectName+"'. It is not cached.");
                 return false;
             }
@@ -200,29 +208,30 @@ C42.SimpleCache = function(){
             cacheSetup.lastUpdate = new Date();
             cacheSetup.valid = true;
 
-            var cachePosition = cachedKeys.indexOf(cacheSetup.cachedObjectName);
-
-            // Updating invalidators index
+            // For perfomance we are using mappings.
             var cacheInvalidator;
             var invalidatorsList = Object.keys(invalidatorsMapping);
             var invalidatorPosition;
 
-            // Removing the object name from the invalidators list
+            // Since it is an update, we don't remove all the invalidators,
+            // we just remove the ones not in the invalidatorsList
             for(var i = 0; i< invalidatorsList.length; i++){
                 invalidator = invalidatorsList[i];
+
                 // This cache had an invalidator that now doesn't
                 if (invalidatorsMapping[invalidator].includes(cacheSetup.cachedObjectName)){
                     if(!cacheSetup.cacheInvalidators.includes(invalidator)){
                         invalidatorPosition = invalidatorsMapping[invalidator].indexOf(cacheSetup.cachedObjectName);
                         invalidatorsMapping[invalidator].splice(invalidatorPosition,1);
+
                         // If, after removing the object from the invalidator, is empty, remove the invalidator key.
                         if(invalidatorsMapping[invalidator].length === 0){
                             delete invalidatorsMapping[invalidator];
                         }
                     }
-                // This invalidator was not existing
                 }
             }
+
             // Adding the ivalidators
             var invalidatorName;
             for(var y = 0; y > cacheSetup.cacheInvalidators.length; y++){
@@ -236,14 +245,13 @@ C42.SimpleCache = function(){
                 }
             }
 
-            // addInvalidators(cacheSetup.cachedObjectName,cacheSetup.cacheInvalidators);
             cache[cachePosition] = cacheSetup;
 
             return true;
         },
 
         /**
-         * Removes a cached object
+         * Removes a cached object keeping up to date the indexes and invalidators
          * @param  {string} cachedObjectName The key name of the cached object
          * @return {boolean}                  True if removed succesfully
          */
@@ -263,7 +271,7 @@ C42.SimpleCache = function(){
             return true;
         },
         /**
-         * Invalidates (So remove) the cached object that have as an invalidator the provided invalidator
+         * Invalidates -remove- the cached object that have as an invalidator the provided invalidator
          * @param  {string} invalidator Invalidator key name.
          * @return {boolean}             True if invalidated succesfully
          */
@@ -288,7 +296,6 @@ C42.SimpleCache = function(){
                     logger.error(me + " : Trying to invalidator '"+invalidated+"'. It is not cached.");
                     return false;
                 }
-
 
                 var cachePosition = cachedKeys.indexOf(invalidated);
 
