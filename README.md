@@ -6,10 +6,6 @@ The simple cache concept borns from the need of caching objects that are really 
 
 In this way, the system where the cache is being used is responsible of the maintenance of the cached objects as to invalidate them where an external factor required of a refresh of that cache.
 
-**User case to solve:**
-
-<img src="./doc-images/common-get-flow.jpg" alt="common-get-flow" style="width: 300px;"/>
-
 ## Documentation
 
 > All snippets in this documentation are based in one user case, caching events for a certain user.
@@ -49,8 +45,6 @@ var event = C42.SimpleCache.get("Event_123");
 
 If the object is not there or is invalid, `event === undefined`.
 
-<img src="./doc-images/get-simple-cache.jpg" alt="get-simple-cache" style="width: 500px; margin-bottom:20px"/>
-
 #### Invalidating the cached object
 
 The purpose of the **C42-simple-cache** is to provide of a really performed way to cache complex objects. Sending any of the cacheInvalidators as a param to the invalidate method will invalidate the cache.
@@ -62,10 +56,6 @@ or
 ``` javascript
 C42.SimpleCache.invalidate("user_events");
 ```
-
-<img src="./doc-images/invalidate-b-simple-cache.jpg" alt="invalidate-b-simple-cache" style="width: 300px; margin-bottom:20px"/>
-or
-<img src="./doc-images/save-modify-simple-cache.jpg" alt="save-modify-simple-cache" style="width: 300px; margin-bottom:20px"/>
 
 > Depending on the reason of the invalidation, different key will invalidate the same object.
 
