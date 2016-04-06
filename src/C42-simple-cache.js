@@ -281,7 +281,7 @@ C42.SimpleCache = function(){
             return true;
         },
         /**
-         * Invalidates -remove- the cached object that have as an invalidator the provided invalidator
+         * Invalidates all cached object that have the provided invalidator.
          * @param  {string} invalidator Invalidator key name.
          * @return {boolean}             True if invalidated succesfully
          */

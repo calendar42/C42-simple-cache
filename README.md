@@ -6,7 +6,17 @@ The simple cache concept borns from the need of caching objects that are really 
 
 In this way, the system where the cache is being used is responsible of the maintenance of the cached objects as to invalidate them where an external factor required of a refresh of that cache.
 
-## Documentation
+## Prerequisites
+
+None, this is a stand-alone component.
+
+## Installation
+
+1. Insert the file into your project.
+1. Reference to it.
+1. Use as in the example below.
+
+## Usage
 
 > All snippets in this documentation are based in one user case, caching events for a certain user.
 
@@ -59,7 +69,7 @@ C42.SimpleCache.invalidate("user_events");
 
 > Depending on the reason of the invalidation, different key will invalidate the same object.
 
-#### Example result
+##### Example result
 
 In the example above is a common usage for this cache, so a `event` is invalidated when the event itself is updated:
 
@@ -72,3 +82,100 @@ And when the list of user events is updated:
 In the example, the `cacheInvalidators` is a shared key fro **all** events of the user. In this way, all events of the user will be refreshed either when the list changes or the user changes.
 
 And meanwhile, the expensive operation is avoided and only the cace is being used to recover the complex object, in this case, an event.
+
+## API Reference
+
+### add
+---
+Adds a new object to cache.
+
+##### Parameters:
+
+* cacheSetup: `{object}` A cached object setup. The expected format is the following:
+```
+{
+      "cachedObjectName"  {string} The key name to identify the cached object
+      "cacheInvalidators" {array} The list of invalidators keys will invalidate the provided cached object
+      "cache": {object/string/...} Anything, the element to be cached
+}
+```
+
+##### Return
+
+* Boolean: True if the object is added successfully.
+
+### update
+
+---
+Updates the cached object, as it's invalidators.
+
+##### Parameters:
+
+* cacheSetup: `{object}` A cached object setup. The expected format is the following:
+```
+{
+      "cachedObjectName"  {string} The key name to identify the cached object
+      "cacheInvalidators" {array} The list of invalidators keys will invalidate the provided cached object
+      "cache": {object/string/...} Anything, the element to be cached
+}
+```
+
+##### Return
+
+* Boolean: True if the object is updated successfully.
+
+### remove
+---
+Removes a cached object.
+
+##### Parameters
+
+* cachedObjectName: `{string}` The key name of the cached object to remove.
+
+##### Return
+
+* Boolean: True if the object is removed successfully.
+
+### invalidate
+---
+Invalidates all cached object that have the provided invalidator.
+
+##### Parameters
+
+* invalidator: `{string}` Invalidator key name.
+
+##### Return
+
+* Boolean: True if the object is invalidated successfully.
+
+### get
+---
+Gets the requested cached object.
+
+##### Parameters
+
+* cachedObjectName: `{string}` The name used to store certain object in the cache.
+
+##### Return
+
+* cachedObject: `{anything}` The validated object.
+
+### getAll
+---
+Gets an object containing all cached objects sorted by key.
+
+##### Parameters
+
+> None
+
+##### Return
+
+* cachedObjectsList: `{object}` An object with the following structure:
+
+```
+{
+  "cachedObjectName1" : cachedObjectContent1,
+  "cachedObjectName2" : cachedObjectContent2,
+  ...
+}
+```
