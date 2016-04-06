@@ -127,6 +127,51 @@ C42.SimpleCache = function(){
         }
     };
 
+    /**
+     * Updates the invalidators of a certain cached object.
+     * @private
+     * @param  {string} cachedObjectName The name of the object affected for this removal
+     * @param  {array} cacheInvalidators  The list opf invalidators to remove
+     */
+    var updateInvalidators = function(cachedObjectName, cacheInvalidators){
+      // For perfomance we are using mappings.
+      var cacheInvalidator;
+      var invalidatorsList = Object.keys(invalidatorsMapping);
+      var invalidatorPosition;
+
+      // Since it is an update, we don't remove all the invalidators,
+      // we just remove the ones not in the invalidatorsList
+      for(var i = 0; i< invalidatorsList.length; i++){
+          invalidator = invalidatorsList[i];
+
+          // This cache had an invalidator that now doesn't
+          if (invalidatorsMapping[invalidator].includes(cachedObjectName)){
+              if(!cacheInvalidators.includes(invalidator)){
+                  invalidatorPosition = invalidatorsMapping[invalidator].indexOf(cachedObjectName);
+                  invalidatorsMapping[invalidator].splice(invalidatorPosition,1);
+
+                  // If, after removing the object from the invalidator, is empty, remove the invalidator key.
+                  if(invalidatorsMapping[invalidator].length === 0){
+                      delete invalidatorsMapping[invalidator];
+                  }
+              }
+          }
+      }
+
+      // Adding the ivalidators
+      var invalidatorName;
+      for(var y = 0; y > cacheInvalidators.length; y++){
+          invalidatorName = cacheInvalidators[y];
+          if(!invalidatorsList.includes(invalidatorName)){
+              invalidatorsMapping[invalidatorName] = [cachedObjectName];
+          }else{
+              if(!invalidatorsMapping[invalidatorName].includes(cachedObjectName)){
+                  invalidatorsMapping[invalidatorName].push(cachedObjectName);
+              }
+          }
+      }
+    };
+
     // The cache itself
     var cache = [];
     // The list of keys the cache includes.
@@ -208,42 +253,7 @@ C42.SimpleCache = function(){
             cacheSetup.lastUpdate = new Date();
             cacheSetup.valid = true;
 
-            // For perfomance we are using mappings.
-            var cacheInvalidator;
-            var invalidatorsList = Object.keys(invalidatorsMapping);
-            var invalidatorPosition;
-
-            // Since it is an update, we don't remove all the invalidators,
-            // we just remove the ones not in the invalidatorsList
-            for(var i = 0; i< invalidatorsList.length; i++){
-                invalidator = invalidatorsList[i];
-
-                // This cache had an invalidator that now doesn't
-                if (invalidatorsMapping[invalidator].includes(cacheSetup.cachedObjectName)){
-                    if(!cacheSetup.cacheInvalidators.includes(invalidator)){
-                        invalidatorPosition = invalidatorsMapping[invalidator].indexOf(cacheSetup.cachedObjectName);
-                        invalidatorsMapping[invalidator].splice(invalidatorPosition,1);
-
-                        // If, after removing the object from the invalidator, is empty, remove the invalidator key.
-                        if(invalidatorsMapping[invalidator].length === 0){
-                            delete invalidatorsMapping[invalidator];
-                        }
-                    }
-                }
-            }
-
-            // Adding the ivalidators
-            var invalidatorName;
-            for(var y = 0; y > cacheSetup.cacheInvalidators.length; y++){
-                invalidatorName = cacheSetup.cacheInvalidators[y];
-                if(!invalidatorsList.includes(invalidatorName)){
-                    invalidatorsMapping[invalidatorName] = [cacheSetup.cachedObjectName];
-                }else{
-                    if(!invalidatorsMapping[invalidatorName].includes(cacheSetup.cachedObjectName)){
-                        invalidatorsMapping[invalidatorName].push(cacheSetup.cachedObjectName);
-                    }
-                }
-            }
+            updateInvalidators(cacheSetup.cachedObjectName, cacheSetup.cacheInvalidators);
 
             cache[cachePosition] = cacheSetup;
 
