@@ -4,7 +4,7 @@ Simple and light `cache` component designed to allow to cache big objects withou
 
 The simple cache concept was born from the need to cache objects that are really expensive to compare. So the invalidation of a cache is done through `key invalidators`.
 
-This way, the system, where the cache is being used, is responsible for the maintenance of the cached objects as to invalidate it when an external factor requires to.
+This way, the system, where the cache is being used, is responsible for the maintenance of the cached objects as to invalidate it when an external factor requires it.
 
 ## Prerequisites
 
