@@ -2,9 +2,9 @@
 
 Simple and light `cache` component designed to allow to cache big objects without comparison.
 
-The simple cache concept borns from the need of caching objects that are really expensive to compare. So the invalidation of a cache is done through `key invalidators`.
+The simple cache concept was born from the need to cache objects that are really expensive to compare. So the invalidation of a cache is done through `key invalidators`.
 
-In this way, the system where the cache is being used is responsible of the maintenance of the cached objects as to invalidate them where an external factor required of a refresh of that cache.
+This way, the system, where the cache is being used, is responsible for the maintenance of the cached objects as to invalidate it when an external factor requires to.
 
 ## Prerequisites
 
@@ -37,13 +37,13 @@ C42.SimpleCache.add({
 
 Where:
 
-**cachedObjectName**: Identifier of the cached object, if is already there it will be replaced.
+**cachedObjectName**: Identifier of the cached object, if it is already there it will be replaced.
 
 **cacheInvalidators**: List of keys can be used to invalidate the cached object. This example shows a cached object that can be invalidated with 2 different keys.
 
-`cacheInvalidators` can be shared between cached objects, and all them will be invalidated when the invalidator is used.
+`cacheInvalidators` can be shared between cached objects, and all of them will be invalidated when the invalidator is used.
 
-**cache**: The object to cache. Apparently a really expensive to compare object.
+**cache**: The object to cache. Apparently a really expensive to compare.
 
 ### Getting the cached object
 
@@ -57,7 +57,7 @@ If the object is not there or is invalid, `event === undefined`.
 
 #### Invalidating the cached object
 
-The purpose of the **C42-simple-cache** is to provide of a really performed way to cache complex objects. Sending any of the cacheInvalidators as a param to the invalidate method will invalidate the cache.
+The purpose of the **C42-simple-cache** is to provide of a really performed way to cache complex objects. Sending any of the cacheInvalidators as a parameter to the invalidate method will invalidate the cache.
 
 ``` javascript
 C42.SimpleCache.invalidate("Event_123");
@@ -67,11 +67,11 @@ or
 C42.SimpleCache.invalidate("user_events");
 ```
 
-> Depending on the reason of the invalidation, different key will invalidate the same object.
+> Depending on the reason of the invalidation, different keys will invalidate the same object.
 
 ##### Example result
 
-In the example above is a common usage for this cache, so a `event` is invalidated when the event itself is updated:
+The example above is a common usage for this cache, so an `event` is invalidated when the event itself is updated:
 
 > the cache is invalidated using it's id: **Event_123**
 
@@ -79,9 +79,9 @@ And when the list of user events is updated:
 
 > the cache is invalidated using it's id: **user_events**
 
-In the example, the `cacheInvalidators` is a shared key fro **all** events of the user. In this way, all events of the user will be refreshed either when the list changes or the user changes.
+In the example, the `cacheInvalidators` is a shared key for **all** the events of the user. In this way, all events of the user will be refreshed either when the list changes or the user changes.
 
-And meanwhile, the expensive operation is avoided and only the cace is being used to recover the complex object, in this case, an event.
+Meanwhile, the expensive operation is avoided and only the cache is being used to recover the complex object, in this case, an event.
 
 ## API Reference
 
