@@ -1,0 +1,29 @@
+{
+  "name": "c42-simple-cache",
+  "version": "1.0.0",
+  "description": "A simple cache component based on key validators. Designed to improve the performance of big JavaScript projects by offering a simple caching mechanism for any object.",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calendar42/C42-simple-cache.git"
+  },
+  "keywords": [
+    "cache",
+    "javascript"
+  ],
+  "author": "Edmon Marine Clota @ Calendar42",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calendar42/C42-simple-cache/issues"
+  },
+  "homepage": "https://github.com/calendar42/C42-simple-cache#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-uglify": "^1.0.1"
+  },
+  "dependencies": {}
+}
